@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import io from "socket.io-client";
 
+import ButtonAppBar from './components/Header';
 import { TodoList } from './components/TodoList';
 import { AddTodoform } from './components/AddTodoForm';
 
@@ -65,7 +66,7 @@ const App: React.FC = () => {
 
   return (
     <React.Fragment>
-      <h1>Todo List {response}</h1>
+      <ButtonAppBar />
       <TodoList todos={todos} toggleTodo={toggleTodo} removeTodo={removeTodo} />;
       <AddTodoform addTodo={addTodo} />
     </React.Fragment>
