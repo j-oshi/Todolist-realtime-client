@@ -52,7 +52,7 @@ export const TodoListItem: React.FC<TodoListItemProps> = ({ todo, toggleTodo, re
                 secondary={todo.complete ? 'complete': undefined}
             />
             <ListItemSecondaryAction>
-                <IconButton edge="end" aria-label="delete" onClick={()=>removeTodo(todo.id)}>
+                <IconButton color="secondary" edge="end" aria-label="delete" onClick={()=>window.confirm("Are you sure you wish to delete this item?") && removeTodo(todo.id)}>
                     <DeleteIcon /> 
                 </IconButton>
             </ListItemSecondaryAction>

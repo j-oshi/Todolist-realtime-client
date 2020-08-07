@@ -39,8 +39,8 @@ export const AddTodoform: React.FC<AddTodoFormProps> = ({ addTodo }) => {
                 <Grid container justify="center" >
                     <Grid item>
                         <form className={classes.root} noValidate autoComplete="off">
-                            <TextField id="outlined-basic" size="small" label="Outlined" variant="outlined" value={newTodo} onChange={handleChange}/>
-                            <Button variant="contained" color="primary" size="large" type="submit" onClick={handleSubmit}>Add Todo</Button>
+                            <TextField id="outlined-basic" size="small" label="Add todo" variant="outlined" value={newTodo} onChange={handleChange}/>
+                            <Button variant="contained" color="primary" size="large" type="submit"  onClick={handleSubmit}>Add Todo</Button>
                         </form>
                     </Grid>
                 </Grid>
