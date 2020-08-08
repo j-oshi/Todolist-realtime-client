@@ -1,73 +1,77 @@
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import io from "socket.io-client";
+import socketIOClient from "socket.io-client";
 
 import ButtonAppBar from './components/Header';
 import { TodoList } from './components/TodoList';
 import { AddTodoform } from './components/AddTodoForm';
 
 const ENDPOINT = "http://127.0.0.1:4001";
+const socket = socketIOClient(ENDPOINT);
 const LOCAL_STORAGE_KEY = "react-todo-list-todos";
-const initialTodos = [{id: 1, text: "Walk the dog", complete: true}, {id: 2, text: "Walk the dogsd", complete: true}]
 
 const App: React.FC = () => {
-  const [response, setResponse] = useState("");
-  const [todos, setTodos] = useState(initialTodos);
-  const socket = io(ENDPOINT);
-
+  const [todos, setTodos] = useState([] as Array<Todo>);
   useEffect(() => {
-    socket.on("FromAPI", data => {
-      setResponse(data);
+
+    socket.on("showrows", data => {
+      setTodos(data);
     });
 
+    // CLEAN UP THE EFFECT
     return () => socket.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (localStorage.getItem(LOCAL_STORAGE_KEY)){
-      const storeTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '');
-
-      if (storeTodos) {
-        setTodos(storeTodos)
-        console.log(storeTodos)
-      }
+  const addTodo: AddTodo = todoText => {
+    const newTodo = { id: uuidv4(), name: todoText, task: 0 };
+    if (todoText.trim() !== "") {
+      setTodos([...todos, newTodo]);
+      socket.emit("add todo", newTodo);
     }
+  };
 
-
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
-  }, [todos]);
+  const removeTodo: RemoveTodo = id => {
+    setTodos(todos.filter(todo => todo.id !== id));
+    socket.emit("remove todo", id);
+  };
 
   const toggleTodo: ToggleTodo = selectedTodo => {
     const newTodos = todos.map(todo => {
       if (todo === selectedTodo) {
+        socket.emit("update todo", {
+          ...todo,
+          task: todo.task == 1 ? 0 : 1
+        });
         return {
           ...todo,
-          complete: !todo.complete
+          task: todo.task == 1 ? 0 : 1
         };
       }
       return todo;
     });
     setTodos(newTodos)
-  }
+  };
 
-  const addTodo: AddTodo = newTodo => {
-    const newList = { id: uuidv4(), text: newTodo, complete: false }
-    newTodo.trim() !== "" && setTodos([...todos, newList]);
-    socket.emit("add list", newList);
-    console.log(newList);
-  }
+  // useEffect(() => {
+  //   if (localStorage.getItem(LOCAL_STORAGE_KEY)){
+  //     const storeTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '');
 
-  const removeTodo: RemoveTodo = id => {
-    setTodos(todos.filter(todo => todo.id !== id));
-  }
+  //     if (storeTodos) {
+  //       setTodos(storeTodos)
+  //       console.log(storeTodos)
+  //     }
+  //   }
+  // }, []);
+
+  // useEffect(() => {
+  //   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
+  // }, [todos]);
+
 
   return (
     <React.Fragment>
       <ButtonAppBar />
-      <TodoList todos={todos} toggleTodo={toggleTodo} removeTodo={removeTodo} />;
+      <TodoList todos={todos} removeTodo={removeTodo} toggleTodo={toggleTodo} />;
       <AddTodoform addTodo={addTodo} />
     </React.Fragment>
   )
