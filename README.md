@@ -1,4 +1,9 @@
-## Get code
+## Real time todo app
+
+This is a real time app built with react, typescript and socket.io.
+It can be paired with [Todo server](https://github.com/j-oshi/Todos-realtime-server/tree/master).
+
+### Get code
 
 Git clone and cd ..
 
