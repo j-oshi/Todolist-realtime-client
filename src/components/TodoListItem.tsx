@@ -1,24 +1,3 @@
-// import React from 'react';
-// import Button from '@material-ui/core/Button';
-// import '../TodoListItem.css'
-
-// interface TodoListItemProps {
-//     todo: Todo;
-//     toggleTodo: ToggleTodo;
-//     removeTodo: RemoveTodo;
-// }
-
-// export const TodoListItem: React.FC<TodoListItemProps> = ({ todo, toggleTodo, removeTodo }) => {  
-//     return (
-//         <li> 
-//             <label className={todo.complete ? 'complete': undefined}> 
-//                 < input type="checkbox" checked={todo.complete} onChange={() => toggleTodo(todo)} /> 
-//                 {todo.text} 
-//             </label>
-//             <Button variant="contained" color="secondary" onClick={()=>removeTodo(todo.id)}>X</Button>
-//         </li >
-//     );
-// };
 import React from 'react';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
@@ -30,29 +9,30 @@ import DeleteIcon from '@material-ui/icons/Delete';
 
 interface TodoListItemProps {
     todo: Todo;
-    toggleTodo: ToggleTodo;
     removeTodo: RemoveTodo;
+    toggleTodo: ToggleTodo;
 }
 
-export const TodoListItem: React.FC<TodoListItemProps> = ({ todo, toggleTodo, removeTodo }) => {  
+export const TodoListItem: React.FC<TodoListItemProps> = ({ todo, removeTodo, toggleTodo }) => { 
     return (
         <ListItem>
             <ListItemAvatar>
             <Checkbox
                 edge="start"
-                checked={todo.complete}
+                checked={todo.task == 1 ? true : false}
                 tabIndex={-1}
                 disableRipple
                 onChange={() => toggleTodo(todo)}
-                // inputProps={{ 'aria-labelledby': labelId }}
               />
             </ListItemAvatar>
             <ListItemText
-                primary={todo.text}
-                secondary={todo.complete ? 'complete': undefined}
+                primary={todo.name}
+                style={{ textDecoration : todo.task == 1 ? 'line-through' : 'none' }} 
             />
             <ListItemSecondaryAction>
-                <IconButton color="secondary" edge="end" aria-label="delete" onClick={()=>window.confirm("Are you sure you wish to delete this item?") && removeTodo(todo.id)}>
+                <IconButton color="secondary" edge="end" aria-label="delete" 
+                    onClick={()=>window.confirm("Are you sure you wish to delete this item?") && removeTodo(todo.id)}
+                >
                     <DeleteIcon /> 
                 </IconButton>
             </ListItemSecondaryAction>

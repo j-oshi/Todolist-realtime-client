@@ -21,16 +21,16 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const AddTodoform: React.FC<AddTodoFormProps> = ({ addTodo }) => {
     const classes = useStyles();
-    const [newTodo, setNewTodo] = useState<string>("");
+    const [todoText, setTodoText] = useState<string>("");
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setNewTodo(e.target.value);
+        setTodoText(e.target.value);
     }
 
     const handleSubmit = (e: FormEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        addTodo(newTodo);
-        setNewTodo("");
+        addTodo(todoText);
+        setTodoText("");
     }
 
     return (
@@ -39,7 +39,7 @@ export const AddTodoform: React.FC<AddTodoFormProps> = ({ addTodo }) => {
                 <Grid container justify="center" >
                     <Grid item>
                         <form className={classes.root} noValidate autoComplete="off">
-                            <TextField id="outlined-basic" size="small" label="Add todo" variant="outlined" value={newTodo} onChange={handleChange}/>
+                            <TextField id="outlined-basic" size="small" label="Add todo" variant="outlined" value={todoText} onChange={handleChange}/>
                             <Button variant="contained" color="primary" size="large" type="submit"  onClick={handleSubmit}>Add Todo</Button>
                         </form>
                     </Grid>

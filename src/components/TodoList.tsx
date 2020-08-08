@@ -1,23 +1,3 @@
-// import React from 'react';
-// import { TodoListItem } from './TodoListItem';
-
-// interface TodolistProps {
-//     todos: Array<Todo>;
-//     toggleTodo: ToggleTodo;
-//     removeTodo: RemoveTodo;
-// }
-
-// export const TodoList: React.FC<TodolistProps> = ({ todos, toggleTodo, removeTodo }) => {
-//     return (
-//         <ul>
-//             {todos.map(todo => {
-//                 return <TodoListItem key={todo.id} todo={todo} toggleTodo={toggleTodo} removeTodo={removeTodo} />
-//             })}
-//         </ul>
-//     );
-// };
-
-
 import React from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
@@ -44,11 +24,11 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface TodolistProps {
     todos: Array<Todo>;
-    toggleTodo: ToggleTodo;
     removeTodo: RemoveTodo;
+    toggleTodo: ToggleTodo;
 }
 
-export const TodoList: React.FC<TodolistProps> = ({ todos, toggleTodo, removeTodo }) => {
+export const TodoList: React.FC<TodolistProps> = ({ todos, removeTodo, toggleTodo }) => {
     const classes = useStyles();
     const [dense, setDense] = React.useState(false);
     const [spacing, setSpacing] = React.useState<GridSpacing>(2);
@@ -65,7 +45,7 @@ export const TodoList: React.FC<TodolistProps> = ({ todos, toggleTodo, removeTod
                             <div className={classes.demo}>
                                 <List dense={dense}>
                                     {todos.map(todo => {
-                                        return <TodoListItem key={todo.id} todo={todo} toggleTodo={toggleTodo} removeTodo={removeTodo} />
+                                        return <TodoListItem key={todo.id} todo={todo} removeTodo={removeTodo} toggleTodo={toggleTodo} />
                                     })}
                                 </List>
                             </div>
