@@ -19,7 +19,7 @@ export const TodoListItem: React.FC<TodoListItemProps> = ({ todo, removeTodo, to
             <ListItemAvatar>
             <Checkbox
                 edge="start"
-                checked={todo.task == 1 ? true : false}
+                checked={todo.task === 1 ? true : false}
                 tabIndex={-1}
                 disableRipple
                 onChange={() => toggleTodo(todo)}
@@ -27,7 +27,7 @@ export const TodoListItem: React.FC<TodoListItemProps> = ({ todo, removeTodo, to
             </ListItemAvatar>
             <ListItemText
                 primary={todo.name}
-                style={{ textDecoration : todo.task == 1 ? 'line-through' : 'none' }} 
+                style={{ textDecoration : todo.task === 1 ? 'line-through' : 'none' }} 
             />
             <ListItemSecondaryAction>
                 <IconButton color="secondary" edge="end" aria-label="delete" 

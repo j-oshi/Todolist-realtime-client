@@ -40,11 +40,11 @@ const App: React.FC = () => {
       if (todo === selectedTodo) {
         socket.emit("update todo", {
           ...todo,
-          task: todo.task == 1 ? 0 : 1
+          task: todo.task === 1 ? 0 : 1
         });
         return {
           ...todo,
-          task: todo.task == 1 ? 0 : 1
+          task: todo.task === 1 ? 0 : 1
         };
       }
       return todo;
