@@ -1,37 +1,61 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import socketIOClient from "socket.io-client";
+import io from "socket.io-client";
 
 import ButtonAppBar from './components/Header';
 import { TodoList } from './components/TodoList';
 import { AddTodoform } from './components/AddTodoForm';
 
 const ENDPOINT = "http://127.0.0.1:4001";
-const socket = socketIOClient(ENDPOINT);
-const LOCAL_STORAGE_KEY = "react-todo-list-todos";
+const socket = io(ENDPOINT);
 
 const App: React.FC = () => {
-  const [todos, setTodos] = useState([] as Array<Todo>);
+
+  const [isActive, setIsActive] = useState(false);
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case 'INITIAL':
+        return [...action.todo];
+      case 'ADD_TODO':
+        return [...state, action.newTodo];
+      case 'TOGGLE_TODO':
+        return [...action.newTodos];
+      case 'REMOVE_TODO':
+        return state.filter(todo => todo.id !== action.id);
+      default:
+        return state;
+    }
+  };
+
+  const [todos, dispatch] = useReducer(reducer, []);
+
   useEffect(() => {
-
-    socket.on("showrows", data => {
-      setTodos(data);
-    });
-
-    // CLEAN UP THE EFFECT
-    return () => socket.disconnect();
-  }, []);
+    try {
+      socket.open();
+      socket.on("showrows", (todo) => {
+        console.log(todo);
+        dispatch({ type: 'INITIAL', todo })
+      })
+    } catch (error) {
+      console.log(error)
+    }
+    // Return a callback to be run before unmount-ing.
+    return () => {
+      socket.close();
+    };
+  }, [])
 
   const addTodo: AddTodo = todoText => {
     const newTodo = { id: uuidv4(), name: todoText, task: 0 };
     if (todoText.trim() !== "") {
-      setTodos([...todos, newTodo]);
+      setIsActive(true);
+      dispatch({ type: 'ADD_TODO', newTodo })
       socket.emit("add todo", newTodo);
     }
   };
 
   const removeTodo: RemoveTodo = id => {
-    setTodos(todos.filter(todo => todo.id !== id));
+    dispatch({ type: 'REMOVE_TODO', id })
     socket.emit("remove todo", id);
   };
 
@@ -49,24 +73,8 @@ const App: React.FC = () => {
       }
       return todo;
     });
-    setTodos(newTodos)
+    dispatch({ type: 'TOGGLE_TODO', newTodos })
   };
-
-  // useEffect(() => {
-  //   if (localStorage.getItem(LOCAL_STORAGE_KEY)){
-  //     const storeTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '');
-
-  //     if (storeTodos) {
-  //       setTodos(storeTodos)
-  //       console.log(storeTodos)
-  //     }
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
-  // }, [todos]);
-
 
   return (
     <React.Fragment>
