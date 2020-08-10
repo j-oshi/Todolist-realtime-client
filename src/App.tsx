@@ -10,8 +10,7 @@ const ENDPOINT = "http://127.0.0.1:4001";
 const socket = io(ENDPOINT);
 
 const App: React.FC = () => {
-
-  const [isActive, setIsActive] = useState(false);
+  const [error, setError] = React.useState(null);
   const reducer = (state, action) => {
     switch (action.type) {
       case 'INITIAL':
@@ -34,10 +33,11 @@ const App: React.FC = () => {
       socket.open();
       socket.on("showrows", (todo) => {
         console.log(todo);
+        console.log('Client session id is ' + socket.id);
         dispatch({ type: 'INITIAL', todo })
       })
     } catch (error) {
-      console.log(error)
+      setError(error)
     }
     // Return a callback to be run before unmount-ing.
     return () => {
@@ -48,7 +48,6 @@ const App: React.FC = () => {
   const addTodo: AddTodo = todoText => {
     const newTodo = { id: uuidv4(), name: todoText, task: 0 };
     if (todoText.trim() !== "") {
-      setIsActive(true);
       dispatch({ type: 'ADD_TODO', newTodo })
       socket.emit("add todo", newTodo);
     }
@@ -79,7 +78,8 @@ const App: React.FC = () => {
   return (
     <React.Fragment>
       <ButtonAppBar />
-      <TodoList todos={todos} removeTodo={removeTodo} toggleTodo={toggleTodo} />;
+      {error && <span>Something went wrong ...</span>}
+      {todos && <TodoList todos={todos} removeTodo={removeTodo} toggleTodo={toggleTodo} />}
       <AddTodoform addTodo={addTodo} />
     </React.Fragment>
   )
