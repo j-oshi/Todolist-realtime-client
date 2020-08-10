@@ -1,15 +1,17 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import socketIOClient from "socket.io-client";
+import io from "socket.io-client";
 
 import ButtonAppBar from './components/Header';
 import { TodoList } from './components/TodoList';
 import { AddTodoform } from './components/AddTodoForm';
 
 const ENDPOINT = "http://127.0.0.1:4001";
-const socket = socketIOClient(ENDPOINT);
+const socket = io(ENDPOINT);
 
 const App: React.FC = () => {
+
+  const [isActive, setIsActive] = useState(false);
   const reducer = (state, action) => {
     switch (action.type) {
       case 'INITIAL':
@@ -28,14 +30,25 @@ const App: React.FC = () => {
   const [todos, dispatch] = useReducer(reducer, []);
 
   useEffect(() => {
-    socket.on("showrows", (todo) => {
-      dispatch({ type: 'INITIAL', todo })
-    });
+    try {
+      socket.open();
+      socket.on("showrows", (todo) => {
+        console.log(todo);
+        dispatch({ type: 'INITIAL', todo })
+      })
+    } catch (error) {
+      console.log(error)
+    }
+    // Return a callback to be run before unmount-ing.
+    return () => {
+      socket.close();
+    };
   }, [])
 
   const addTodo: AddTodo = todoText => {
     const newTodo = { id: uuidv4(), name: todoText, task: 0 };
     if (todoText.trim() !== "") {
+      setIsActive(true);
       dispatch({ type: 'ADD_TODO', newTodo })
       socket.emit("add todo", newTodo);
     }

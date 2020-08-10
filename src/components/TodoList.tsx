@@ -39,7 +39,7 @@ export const TodoList: React.FC<TodolistProps> = ({ todos, removeTodo, toggleTod
             <Grid item>
               <Typography variant="h1" className={classes.title}>
                 Todo list
-                            </Typography>
+              </Typography>
               <div className={classes.demo}>
                 <List dense={dense}>
                   {todos.map(todo => {
@@ -52,5 +52,5 @@ export const TodoList: React.FC<TodolistProps> = ({ todos, removeTodo, toggleTod
         </Grid>
       </Grid>
     </div>
-  );
-}
+  )
+};

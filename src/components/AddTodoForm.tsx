@@ -47,4 +47,4 @@ export const AddTodoform: React.FC<AddTodoFormProps> = ({ addTodo }) => {
       </Grid>
     </Grid>
   )
-}
+};
